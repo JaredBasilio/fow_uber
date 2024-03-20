@@ -1,25 +1,129 @@
 import logo from './logo.svg';
+import * as React from "react";
 import './App.css';
+import { Button} from "baseui/button";
+import {Block} from "baseui/block";
+import ReactMapGL, { Marker } from "react-map-gl";
+import {
+  HeaderNavigation,
+  ALIGN,
+  StyledNavigationList,
+  StyledNavigationItem
+} from "baseui/header-navigation";
+import { FixedMarker } from "baseui/map-marker";
+import { StyledLink } from "baseui/link";
+import {
+  HeadingXSmall,
+  ParagraphLarge,
+} from "baseui/typography";
+import { ToasterContainer, toaster} from 'baseui/toast';
 
-function App() {
+const berkeley = {
+  latitude: 37.8715,
+  longitude: -122.2730,
+};
+
+const sf = {
+  latitude: 37.77449,
+  longitude: -122.41946,
+};
+
+const initialViewport = {
+  ...berkeley,
+  ...sf,
+  zoom: 14,
+};
+
+const center = {
+  lat: 0,
+  lng: 0
+};
+
+export default function App() {
+  const [job, setJob] = React.useState('Driver');
+  const [leisure, setLeisure] = React.useState(false);
+  const [leisureTime, setLeisureTime] = React.useState(0);
+  const [viewport, setViewport] = React.useState(initialViewport);
+
+  const SwitchJob = () => {
+    if (job === 'Driver') {
+      setJob('Eater');
+    } else {
+      setJob('Driver');
+    }
+  }
+
+  React.useEffect(() => {
+    let interval;
+
+    if (leisure) {
+      interval = setInterval(() => {
+        setLeisureTime(prevTime => prevTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+      setLeisureTime(0);
+    }
+  }, [leisure]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <Block>
+        <HeaderNavigation>
+          <StyledNavigationList $align={ALIGN.center}>
+            <StyledNavigationItem>
+              <Button onClick={() => {
+                setLeisure(leisure ^ true);
+
+              }}>Switch to Leisure</Button>
+            </StyledNavigationItem>
+            <StyledNavigationItem>
+              <Button onClick={SwitchJob}>Switch to {job}</Button>
+            </StyledNavigationItem>
+          </StyledNavigationList>
+        </HeaderNavigation>
+        <Block display="flex" height="100vh" width="width=100%">
+          <Block width="20%" padding="1em">
+            <HeadingXSmall padding="0">Total Leisure Time: {leisureTime}</HeadingXSmall>
+          </Block>
+          <ToasterContainer>
+            <Block width="80%">
+              <ReactMapGL
+                {...viewport}
+                width="100%"
+                height="100%"
+                onViewportChange={(viewport) => setViewport(viewport)}
+                mapboxApiAccessToken="pk.eyJ1IjoiYmFiYnN1YmVyIiwiYSI6ImNrdThqeGkxZTVwb3kyd3BpZGRlc2NlOXUifQ.qh-EtXm2DJQZVprWUJ-GFQ" // TODO Change Later
+              >
+                <Marker {...berkeley}>
+                  <FixedMarker
+                    label="Berkeley"
+                    overrides={{
+                      Root: {
+                        style: () => ({
+                          transform: `translate(-50%, -100%)`,
+                        }),
+                      },
+                    }}
+                  />
+                </Marker>
+                <Marker {...sf}>
+                  <FixedMarker
+                    label="San Francisco"
+                    overrides={{
+                      Root: {
+                        style: () => ({
+                          transform: `translate(-50%, -100%)`,
+                        }),
+                      },
+                    }}
+                  />
+                </Marker>
+              </ReactMapGL>
+            </Block>
+          </ToasterContainer>
+        </Block>
+      </Block>
+    </React.Fragment>
   );
 }
-
-export default App;
