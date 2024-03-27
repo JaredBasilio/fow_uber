@@ -1,0 +1,6 @@
+export const DRIVER = 'Driver'
+export const EATS = 'Eats'
+export const LEISURE = 'Leisure'
+export const GAME_OVER = 'Game Over'
+export const BERKELEY = 'Berkeley'
+export const SAN_FRANCISCO = 'San Francisco'

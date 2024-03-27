@@ -1,146 +1,107 @@
-import logo from './logo.svg';
 import * as React from "react";
 import './App.css';
-import { Button, SIZE} from "baseui/button";
-import {Block} from "baseui/block";
-import ReactMapGL, { Marker } from "react-map-gl";
-import {
-  HeaderNavigation,
-  ALIGN,
-  StyledNavigationList,
-  StyledNavigationItem
-} from "baseui/header-navigation";
-import { FixedMarker } from "baseui/map-marker";
-import { StyledLink } from "baseui/link";
-import {
-  HeadingXSmall,
-  ParagraphLarge,
-} from "baseui/typography";
-import { ToasterContainer, toaster, PLACEMENT, Toast} from 'baseui/toast';
-
-const berkeley = {
-  latitude: 37.8715,
-  longitude: -122.2730,
-};
-
-const sf = {
-  latitude: 37.77449,
-  longitude: -122.41946,
-};
-
-const initialViewport = {
-  ...berkeley,
-  ...sf,
-  zoom: 14,
-};
-
-const center = {
-  lat: 0,
-  lng: 0
-};
-
-export function Game() {
-  return 
-    <>
-    </>
-}
+import NavBar from "./NavBar";
+import { GameContext, TimerContext } from "./utils/contexts";
+import {DRIVER, EATS, LEISURE, GAME_OVER} from './utils/constants';
+import JobSelect from './JobSelect';
+import Leisure from './Leisure';
+import Statistics from './Statistics';
+import { Block } from "baseui/block";
+import {Input} from "baseui/input";
+import {FormControl} from "baseui/form-control";
+import {Button} from "baseui/button";
+import { useStyletron } from "baseui";
+import {Banner, KIND} from "baseui/banner";
 
 export default function App() {
-  const [job, setJob] = React.useState('Driver');
-  const [leisure, setLeisure] = React.useState(false);
-  const [leisureTime, setLeisureTime] = React.useState(0);
-  const [viewport, setViewport] = React.useState(initialViewport);
-  const [game, setGame] = React.useState(false);
-  const [totalTime, setTotalTime] = React.useState(0);
-  const [playing, setPlaying] = React.useState(true);
+  const [mode, setMode] = React.useState(DRIVER);
+  const [timeElapsed, setTimeElapsed] = React.useState(0);
+  const [leisureTimeElapsed, setLeisureTimeElapsed] = React.useState(0);
+  const [inputValue, setInputValue] = React.useState('');
+  const [player, setPlayer] = React.useState('');
+  const [css, theme] = useStyletron();
+  const [inputError, setInputError] = React.useState(false);
 
-  let toastKey;
-  const msg = "Job from Berkeley to SF";
+  const gameContextValue = {
+    currentMode: mode,
+    setCurrentMode: newMode => setMode(newMode),
+  };
 
-  const SwitchJob = () => {
-    if (job === 'Driver') {
-      setJob('Eater');
+  React.useEffect(() => {
+    const timer = setInterval(() => setTimeElapsed(timeElapsed + 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeElapsed]);
+
+  React.useEffect(() => {
+    const timer = mode === LEISURE && setInterval(() => setLeisureTimeElapsed(leisureTimeElapsed + 1), 1000);
+    return () => clearInterval(timer);
+  }, [leisureTimeElapsed, mode]);
+
+  const timeContextValue = {
+    timeElapsed: timeElapsed,
+    leisureTimeElapsed: leisureTimeElapsed,
+  }
+
+  const startGame = () => {
+    if (inputValue !== '') {
+      setPlayer(inputValue);
     } else {
-      setJob('Driver');
+      setInputError(true);
     }
   }
 
-  return (
-    <React.Fragment>
-      {playing ? 
-      <Block>
-        <HeaderNavigation>
-          <StyledNavigationList $align={ALIGN.left}>
-            <StyledNavigationItem>
-              <Button onClick={() => {
-                setLeisure(leisure ^ true);
-              }}>Switch to Leisure</Button>
-            </StyledNavigationItem>
-          </StyledNavigationList>
-          <StyledNavigationList $align={ALIGN.center}>
-            <StyledNavigationItem>
-              <Button onClick={SwitchJob}>Switch to {job}</Button>
-            </StyledNavigationItem>
-          </StyledNavigationList>
-          <StyledNavigationList $align={ALIGN.right}>
-            <StyledNavigationItem>
-              <Button onClick={() => {
-                setPlaying(false);
-              }}>End Game</Button>
-            </StyledNavigationItem>
-          </StyledNavigationList>
-        </HeaderNavigation>
-          <Block display="flex" height="100vh" width="width=100%">
-          <Block width="20%" padding="1em">
-            <HeadingXSmall padding="0">Total Time: {totalTime}</HeadingXSmall>
-            <HeadingXSmall padding="0">Total Leisure Time: {leisureTime}</HeadingXSmall>
-          </Block>
-          <ToasterContainer placement={PLACEMENT.bottomRight}></ToasterContainer>
-          <Block width="80%">
-          {game ? 
-            <Game />
-          :
-            <ReactMapGL
-              {...viewport}
-              width="100%"
-              height="100%"
-              onViewportChange={(viewport) => setViewport(viewport)}
-              mapboxApiAccessToken="pk.eyJ1IjoiYmFiYnN1YmVyIiwiYSI6ImNrdThqeGkxZTVwb3kyd3BpZGRlc2NlOXUifQ.qh-EtXm2DJQZVprWUJ-GFQ" // TODO Change Later
-            >
-              <Marker {...berkeley}>
-                <FixedMarker
-                  label="Berkeley"
-                  overrides={{
-                    Root: {
-                      style: () => ({
-                        transform: `translate(-50%, -100%)`,
-                      }),
+  const handleEnter = (event) => {
+    if (event.key === 'Enter') {
+      startGame();
+    }
+  }
+
+  if (player === '') {
+    return (
+      <Block display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <Block width="50%">
+          <FormControl
+            label={() => "Enter Your Name:"}
+            caption={() => "Press Enter or Click Start to Play"}
+          >
+            <Block display="flex">
+              <Input 
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                clearOnEscape
+                onKeyDown={handleEnter}
+                overrides={{
+                  Root: {
+                    style: {
+                      marginRight: theme.sizing.scale400,
                     },
-                  }}
-                />
-              </Marker>
-              <Marker {...sf}>
-                <FixedMarker
-                  label="San Francisco"
-                  overrides={{
-                    Root: {
-                      style: () => ({
-                        transform: `translate(-50%, -100%)`,
-                      }),
-                    },
-                  }}
-                />
-              </Marker>
-            </ReactMapGL>
+                  },
+                }}
+                error={inputError}
+              />
+              <Button onClick={startGame}>Start</Button>
+            </Block>
+          </ FormControl>
+          {inputError &&
+            <Banner title="Error" kind={KIND.negative}>
+              Name Field must not be blank
+            </Banner>
           }
-          </Block>
         </Block>
       </Block>
-      : 
-      <>
-        You are no Longer Playing
-      </>
-      }
-    </React.Fragment>
+    )
+  }
+
+  return (
+    <GameContext.Provider value={gameContextValue}>
+      <NavBar />
+      <TimerContext.Provider value={timeContextValue}>
+        <Block display="flex" height="100vh">
+          <Statistics />
+          {(mode === DRIVER || mode === EATS) && <JobSelect />}
+          {mode === LEISURE && <Leisure />}
+        </Block>
+      </TimerContext.Provider>
+    </GameContext.Provider>
   );
 }
