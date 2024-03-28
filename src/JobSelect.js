@@ -7,18 +7,18 @@ import { GameContext } from "./utils/contexts";
 import {Block} from "baseui/block";
 
 export default function JobSelect() {
-    const {currentMode} = React.useContext(GameContext);
+    const {currentMode, selectJob} = React.useContext(GameContext);
 
     return (
         <Block width="90%">
             <ul>
                 {jobs
                     .filter(({type}) => type === currentMode)
-                    .map(({name, type, items, profit}) => 
+                    .map(({id, name, type, items, profit, waitTime}) => 
                     <ListItem
                         endEnhancer={() => (
                             <ListItemLabel>
-                                <Button>Select Job</Button>
+                                <Button onClick={() => selectJob(id)}>Select Job</Button>
                             </ListItemLabel>
                         )}
                     >
@@ -26,6 +26,7 @@ export default function JobSelect() {
                             description={
                                 <>
                                     <Tag closeable={false}>{type}</Tag>
+                                    <Tag closeable={false}>Avg Wait Time: {waitTime}</Tag>
                                     <Tag closeable={false}>Avg Items: {items}</Tag>
                                     <Tag closeable={false}>Avg Earnings: ${profit}</Tag>
                                 </>

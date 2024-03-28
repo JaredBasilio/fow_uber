@@ -14,9 +14,10 @@ export default function NavBar() {
 
     return (
         <HeaderNavigation>
+          <StyledNavigationList $align={ALIGN.left} />
           <StyledNavigationList $align={ALIGN.center}>
             <StyledNavigationItem>
-              <Button onClick={() => setCurrentMode(LEISURE)}>Switch to Leisure</Button>
+              <Button padding="1em" onClick={() => setCurrentMode(LEISURE)}>Switch to Leisure</Button>
             </StyledNavigationItem>
             <StyledNavigationItem>
               <Button 
@@ -38,6 +39,7 @@ export default function NavBar() {
               </Button>
             </StyledNavigationItem>
           </StyledNavigationList>
+          <StyledNavigationList $align={ALIGN.right} />
         </HeaderNavigation>
     )
 }

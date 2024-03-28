@@ -1,4 +1,5 @@
 import * as React from 'react';
 
-export const GameContext = React.createContext('driver');
-export const TimerContext = React.createContext(0);
+export const GameContext = React.createContext(null);
+export const StatsContext = React.createContext(null);
+export const UserContext = React.createContext(null);
