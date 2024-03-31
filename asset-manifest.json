@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/fow_uber/static/css/main.964fdded.css",
+    "main.js": "/fow_uber/static/js/main.c5b00074.js",
+    "static/js/453.2e1bc40e.chunk.js": "/fow_uber/static/js/453.2e1bc40e.chunk.js",
+    "static/media/yellow.jpg": "/fow_uber/static/media/yellow.f34ab021b18a0c64246a.jpg",
+    "static/media/green.jpg": "/fow_uber/static/media/green.9bf65f42a993eafb07d8.jpg",
+    "static/media/red.jpg": "/fow_uber/static/media/red.13bf37dec42703e87c99.jpg",
+    "index.html": "/fow_uber/index.html",
+    "main.964fdded.css.map": "/fow_uber/static/css/main.964fdded.css.map",
+    "main.c5b00074.js.map": "/fow_uber/static/js/main.c5b00074.js.map",
+    "453.2e1bc40e.chunk.js.map": "/fow_uber/static/js/453.2e1bc40e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.964fdded.css",
+    "static/js/main.c5b00074.js"
+  ]
+}
